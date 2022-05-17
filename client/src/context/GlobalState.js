@@ -2,14 +2,19 @@ import React, {createContext, useReducer} from 'react';
 import AppReducer from './AppReducer'
 import axios from 'axios'
 
+// var customers = [
+//     { id: 0, firstName: 'Dave', lastName: 'Norton', email: 'dave@whatever.com' },
+//     { id: 1, firstName: 'Joe', lastName: 'Smith', email: 'joe@whatever.com' }
+// ]
+
 // Initial state (customers would need to be loaded from the DB source)
 const initialState = {
-    activeCustomer: { id: -1, firstName: '', lastName: '', email: ''},
+    activeCustomer: { _id: -1, firstName: '', lastName: '', email: ''},
     customers: [],
     loading: true
-    // { id: 0, firstName: 'Dave', lastName: 'Norton', email: 'dave@whatever.com' },
-    // { id: 1, firstName: 'Joe', lastName: 'Smith', email: 'joe@whatever.com' },
 }
+
+
 
 // Create context:
 export const GlobalContext = createContext(initialState);
@@ -74,11 +79,26 @@ export const GlobalProvider = ({ children }) => {
 
     }
 
-    const updateCustomerAction = (customer) => {
-        dispatch({
-            type: 'UPDATE_CUSTOMER',
-            payload: customer
-        })
+    const updateCustomerAction = async (customer) => {
+
+        const config = {
+            headers: {
+                'Content-type': 'application/json'
+            }
+        }
+
+        try {
+            const res = await axios.post(`/api/customers/${customer._id}`, customer, config)
+            dispatch({
+                type: 'UPDATE_CUSTOMER',
+                payload: res.data.data
+            })
+        } catch (err) {
+            dispatch({
+                type: 'CUSTOMER_ERROR',
+                payload: err.response.data.error
+            }) 
+        }
     }
 
     const setActiveCustomer = (customer) => {

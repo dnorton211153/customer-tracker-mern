@@ -72,3 +72,32 @@ exports.deleteCustomer = async (req,res,next) => {
         })        
     }
 } 
+
+exports.updateCustomer = async (req,res,next) => {
+    try {
+        const customer = await Customer.findById(req.params.id);
+        if (!customer) {
+            return res.status(404).json({
+                success: false,
+                error: 'No customer found'
+            })
+        } else {
+
+            Object.entries(req.body).forEach(([key,value]) => {
+                customer[key] = value;
+            })
+
+            await customer.save();
+            return res.status(200).json({
+                success: true,
+                data: customer
+            })
+        }
+
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            error: 'Server error'
+        })        
+    }
+} 

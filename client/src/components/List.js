@@ -32,7 +32,7 @@ export const List = () => {
         <div className="list-group">
           {customers.map(customer => ( 
 
-            <div key={customer.id} className="d-flex flex-row list-group-item">
+            <div key={customer._id} className="d-flex flex-row list-group-item">
                 <div className="col-7">{customer.firstName} {customer.lastName}</div>
                 <div className="col-2" role="button" onClick={(e) => editCustomer(customer)}><span className="badge bg-secondary rounded-pill noClick"><i className="fa fa-edit noClick" aria-hidden="true"></i></span></div>
                 <div className="col-2" role="button" onClick={(e) => emailCustomer(customer)}><span className="badge bg-primary rounded-pill noClick"><i className="fa fa-send noClick" aria-hidden="true"></i></span></div>

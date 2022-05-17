@@ -1,11 +1,10 @@
-import React, {useState, useContext} from 'react';
+import React, {useContext} from 'react';
 import { GlobalContext } from '../context/GlobalState';
-import axios from "axios";
 
 export const Detail = () => {
 
-  const {activeCustomer, setActiveCustomer, updateCustomerAction} = useContext(GlobalContext);
-  const {id,firstName,lastName,email} = activeCustomer;
+  const {activeCustomer, setActiveCustomer, addCustomerAction, updateCustomerAction} = useContext(GlobalContext);
+  const {_id,firstName,lastName,email} = activeCustomer;
 
   const setParam = (param, value) => {
     setActiveCustomer({
@@ -16,16 +15,22 @@ export const Detail = () => {
   
   const handleSubmit = async (event) => {
     event.preventDefault();
-    updateCustomerAction(activeCustomer)
 
+    // If the _id (in the '#id' element) is -1, submit new customer;
+    // else update customer.
 
-    // const { name, message } = this.state;
-    // await axios.post(
-    //   "https://65vpg3icwg.execute-api.us-west-1.amazonaws.com/default/serverlessAppFunction",
-    //   { key1: `${name}, ${message}` },
-    //   { headers: {
-    //   }}
-    // );
+    if (activeCustomer._id === -1) {
+      let copy = JSON.parse(JSON.stringify(activeCustomer));
+      delete copy._id;
+      addCustomerAction(copy);
+    } else {
+      updateCustomerAction(activeCustomer);
+    }
+  }
+
+  const clearForm = (event) => {
+    event.preventDefault();
+    setActiveCustomer({ _id: -1, firstName: '', lastName: '', email: ''});
   }
 
   return (
@@ -35,7 +40,7 @@ export const Detail = () => {
         <div>
           <form className="row g-3 needs-validation" onSubmit={handleSubmit} noValidate>
 
-            <input type="hidden" name="id" value={id}/>
+            <input type="hidden" id="id" name="id" value={_id}/>
             <div className="col-md-4">
               <label htmlFor="firstName" className="form-label">First Name</label>
               <input type="text" className="form-control" id="firstName" value={firstName} onChange={(e) => setParam('firstName', e.target.value)} required />
@@ -69,6 +74,7 @@ export const Detail = () => {
               </div>
             </div>
             <div className="col-12">
+              <button className="btn btn-danger" onClick={clearForm}>New</button>
               <button className="btn btn-primary" type="submit">Save</button>
             </div>
           </form>
